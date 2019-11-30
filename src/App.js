@@ -34,9 +34,28 @@ class App extends React.Component {
       imageUrl: '',
       box: {},
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+      user:{
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: ''
+      }
     }
   }
+
+  loadUser = (data) => {
+    this.setState({user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        entries: data.entries,
+        joined: data.joined
+
+    }})
+  }
+
 
   calculateFaceLocation = (data) =>{
       const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -90,16 +109,17 @@ class App extends React.Component {
           ?
           <div>
             <Logo />
-            <Rank />
+            <Rank name={this.state.user.name} 
+                entries={this.state.user.entries} />
             <ImageLinkForm 
                 onSubmit={this.onSubmit} 
-                onInputChange={this.onInputChange}/>
+                onInputChange={this.onInputChange} />
             <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
           </div>
           :(
             this.state.route==='signin'
-            ? <SignIn onRouteChange={this.onRouteChange} /> 
-            : <Register onRouteChange={this.onRouteChange} /> 
+            ? <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} /> 
+            : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} /> 
             )
         }
       </div>
